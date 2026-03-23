@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+export const dynamic = "force-dynamic";
+
 type PreviewFile = {
   id: string;
   file: File;
