@@ -1,6 +1,5 @@
 "use client";
 
-import JSZip from "jszip";
 import { useEffect, useRef, useState } from "react";
 
 type PreviewFile = {
@@ -81,7 +80,6 @@ export default function Home() {
     });
   };
 
-  
   const prepareFiles = async (files: File[]) => {
     const processedFiles: File[] = [];
 
@@ -215,6 +213,8 @@ export default function Home() {
 
     try {
       setIsProcessing(true);
+
+      const JSZip = (await import("jszip")).default;
 
       const formData = new FormData();
 
