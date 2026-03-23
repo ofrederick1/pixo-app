@@ -345,10 +345,11 @@ export default function Home() {
 
           <section className="mx-auto flex w-full max-w-[980px] flex-col items-center px-4 pt-10 text-center md:pt-14">
             <h1
-              className={`max-w-[960px] text-4xl font-semibold leading-[0.95] tracking-[-0.04em] sm:text-7xl md:text-[108px] ${textPrimary}`}
+              className={`max-w-[960px] text-4xl font-semibold leading-[0.95] tracking-[-0.04em] sm:text-xl md:text-[80px] ${textPrimary}`}
             >
-              Compress, rename, <br />
-              and write alt text – all at once.
+              Resize, rename,<br/>
+              & optimize your images –
+              all at once.
             </h1>
 
             <p
