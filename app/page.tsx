@@ -2,7 +2,6 @@
 
 import JSZip from "jszip";
 import { useEffect, useRef, useState } from "react";
-import heic2any from "heic2any";
 
 type PreviewFile = {
   id: string;
@@ -82,6 +81,7 @@ export default function Home() {
     });
   };
 
+  
   const prepareFiles = async (files: File[]) => {
     const processedFiles: File[] = [];
 
@@ -90,6 +90,7 @@ export default function Home() {
 
       if (isHeicFile(file)) {
         try {
+          const heic2any = (await import("heic2any")).default;
           const convertedBlob = await heic2any({
             blob: file,
             toType: "image/jpeg",
@@ -109,7 +110,9 @@ export default function Home() {
           processedFiles.push(convertedFile);
         } catch (error) {
           console.error("HEIC conversion failed:", error);
-          alert(`Could not convert ${file.name}. Please try a different image.`);
+          alert(
+            `Could not convert ${file.name}. Please try a different image.`,
+          );
         }
       } else {
         processedFiles.push(file);
@@ -121,7 +124,44 @@ export default function Home() {
 
   const handleFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const processedFiles = await prepareFiles(files);
+    const processedFiles: File[] = [];
+
+    for (const file of files) {
+      const isHeic =
+        file.type === "image/heic" ||
+        file.type === "image/heif" ||
+        file.name.toLowerCase().endsWith(".heic") ||
+        file.name.toLowerCase().endsWith(".heif");
+
+      if (isHeic) {
+        try {
+          const heic2any = (await import("heic2any")).default;
+
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: "image/jpeg",
+            quality: 0.8,
+          });
+
+          const blob = Array.isArray(convertedBlob)
+            ? convertedBlob[0]
+            : convertedBlob;
+
+          const convertedFile = new File(
+            [blob as Blob],
+            file.name.replace(/\.(heic|heif)$/i, ".jpg"),
+            { type: "image/jpeg" },
+          );
+
+          processedFiles.push(convertedFile);
+        } catch (error) {
+          console.error("HEIC conversion failed:", error);
+        }
+      } else {
+        processedFiles.push(file);
+      }
+    }
+
     addFiles(processedFiles);
 
     if (fileInputRef.current) {
@@ -325,7 +365,13 @@ export default function Home() {
             </div>
 
             <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-              {["Shopify", "WordPress", "Squarespace", "Wix", "MLS Listings"].map((item) => (
+              {[
+                "Shopify",
+                "WordPress",
+                "Squarespace",
+                "Wix",
+                "MLS Listings",
+              ].map((item) => (
                 <button
                   key={item}
                   className={`rounded-full px-5 py-3 text-base font-semibold ${chipClass}`}
@@ -438,7 +484,7 @@ export default function Home() {
                     >
                       PNG
                     </option>
-                     <option
+                    <option
                       value="heic"
                       className={isDarkMode ? "bg-[#07110c]" : "bg-white"}
                     >
